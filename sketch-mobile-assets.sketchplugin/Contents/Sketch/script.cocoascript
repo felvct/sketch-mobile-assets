@@ -193,12 +193,17 @@ var onRun = function(context) {
     function copy_layer_with_factor(original_slice, factor){
         var copySlice = [original_slice duplicate];
 
-        var rect = [MSSliceTrimming simpleSafeRectForSlice:copySlice];
-        var slice = [MSExportRequest requestWithRect:rect scale:factor];
+        //var rect = [MSSliceTrimming simpleSafeRectForSlice:copySlice] --> Deprecated in V41
+        var ancestry = [MSImmutableLayerAncestry ancestryWithMSLayer:copySlice];
+        var rect = [MSSliceTrimming trimmedRectForLayerAncestry:ancestry];
+        //var slice = [MSExportRequest requestWithRect:rect scale:factor] --> Deprecated in V41
+        var request = [MSExportRequest new];
+        request.rect = rect;
+        request.scale = factor;
 
         [copySlice removeFromParent];
 
-        return slice;
+        return request;
     }
     // start
     main();
