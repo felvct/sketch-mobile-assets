@@ -194,16 +194,18 @@ var onRun = function(context) {
         var copySlice = [original_slice duplicate];
 
         //var rect = [MSSliceTrimming simpleSafeRectForSlice:copySlice] --> Deprecated in V41
-        var ancestry = [MSImmutableLayerAncestry ancestryWithMSLayer:copySlice];
-        var rect = [MSSliceTrimming trimmedRectForLayerAncestry:ancestry];
+        var rect = copySlice.absoluteRect().rect();
+
         //var slice = [MSExportRequest requestWithRect:rect scale:factor] --> Deprecated in V41
-        var request = [MSExportRequest new];
-        request.rect = rect;
-        request.scale = factor;
+        var slice = MSExportRequest.alloc().init();
+        slice.setRect(rect);
+        slice.setScale(factor);
+        slice.configureForLayer(original_slice); // set Background to transparent
+
 
         [copySlice removeFromParent];
 
-        return request;
+        return slice;
     }
     // start
     main();
